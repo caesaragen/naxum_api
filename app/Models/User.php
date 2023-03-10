@@ -49,4 +49,28 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Contact::class);
     }
+
+    /**
+ * Get the username attribute based on the user's first and last name.
+ *
+ * @return string
+ */
+public function getUsernameAttribute()
+{
+    $username = strtolower($this->first_name . '.' . $this->last_name);
+
+    // Remove any non-alphanumeric characters and replace spaces with underscores
+    $username = preg_replace('/[^a-z0-9 ]/i', '', $username);
+    $username = str_replace(' ', '_', $username);
+
+    // Check if the username already exists in the database
+    $count = User::where('username', $username)->where('id', '!=', $this->id)->count();
+
+    // If the username is already taken, append a number to make it unique
+    if ($count > 0) {
+        $username .= $count;
+    }
+
+    return $username;
+}
 }

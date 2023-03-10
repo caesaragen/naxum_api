@@ -9,19 +9,32 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
-        $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
-        ]);
+    public function register(Request $request)
+    {
+        try {
+            $fields = $request->validate([
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'required|string|unique:users,email',
+                'phone' => 'required|string|unique:users,phone',
+                'password' => 'required|string'
+            ]);
+        } catch (\Exception $e) {
+            return response(['message' => 'Validation error occurred.'], 422);
+        }
+        
+        $firstName = $fields['first_name'];
+        $lastName = $fields['last_name'];
+        $username = strtolower(substr($firstName, 0, 1) . $lastName);
 
         $user = User::create([
-            'name' => $fields['name'],
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'username' => $username,
             'email' => $fields['email'],
+            'phone' => $fields['phone'],
             'password' => bcrypt($fields['password'])
         ]);
-
         $token = $user->createToken('myapptoken')->plainTextToken;
 
         $response = [
@@ -32,7 +45,8 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $fields = $request->validate([
             'email' => 'required|string',
             'password' => 'required|string'
@@ -42,9 +56,9 @@ class AuthController extends Controller
         $user = User::where('email', $fields['email'])->first();
 
         // Check password
-        if(!$user || !Hash::check($fields['password'], $user->password)) {
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
             return response([
-                'message' => 'Bad creds'
+                'message' => 'Bad credentials'
             ], 401);
         }
 
@@ -58,7 +72,8 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         auth()->user()->tokens()->delete();
 
         return [
