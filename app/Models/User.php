@@ -73,4 +73,5 @@ public function getUsernameAttribute()
 
     return $username;
 }
+
 }
