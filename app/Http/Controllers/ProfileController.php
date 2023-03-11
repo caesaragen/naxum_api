@@ -21,6 +21,11 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return response()->json(['message' => 'Personal information updated successfully'], 200);
+        return response()->json([
+            'message' => 'Personal information updated successfully',
+            'user' => $user,
+            'status' => 'success'
+        ], 200);
+        
     }
 }

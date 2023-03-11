@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
@@ -22,17 +22,17 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/products', [ProductController::class, 'index']);
-Route::get('/products/{id}', [ProductController::class, 'show']);
-Route::get('/products/search/{name}', [ProductController::class, 'search']);
+Route::get('/contacts', [ContactController::class, 'index']);
+Route::get('/contacts/{id}', [ContactController::class, 'show']);
+Route::get('/contacts/search/{name}', [ContactController::class, 'search']);
 
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::put('/profile', [ProfileController::class, 'update']);
-    Route::put('/products/{id}', [ProductController::class, 'update']);
-    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+    Route::post('/contacts', [ContactController::class, 'store']);
+    Route::put('/profile', [ContactController::class, 'update']);
+    Route::put('/contacts/{id}', [ContactController::class, 'update']);
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
